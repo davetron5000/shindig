@@ -1,0 +1,2 @@
+defmodule Shindig do
+end
