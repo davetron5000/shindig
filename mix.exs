@@ -4,6 +4,7 @@ defmodule Shindig.Mixfile do
   def project do
     [ app: :shindig,
       version: "0.0.1",
+      name: "Shindig",
       elixir: "~> 0.10.1",
       deps: deps ]
   end
@@ -16,6 +17,9 @@ defmodule Shindig.Mixfile do
   # Returns the list of dependencies in the format:
   # { :foobar, "~> 0.1", git: "https://github.com/elixir-lang/foobar.git" }
   defp deps do
-    []
+    [
+    { :ex_doc,  github: "elixir-lang/ex_doc" },
+    { :exredis, github: "artemeff/exredis" }
+    ]
   end
 end

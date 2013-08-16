@@ -1,6 +1,7 @@
 defmodule Shinding.Test.EventCreator do
-  use ExUnit.Case
+  use ExUnit.Case, async: true
   import Shindig.EventCreator
+  doctest Shindig.EventCreator
 
   test "events created get a date assigned" do
     event = new_event("foo",20)

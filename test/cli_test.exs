@@ -1,5 +1,5 @@
 defmodule Shinding.Test.CLI do
-  use ExUnit.Case
+  use ExUnit.Case, async: true
   import Shindig.CLI, only: [ parse_args: 1]
 
   test ":help returned by option parsing with -h and --help options" do 
