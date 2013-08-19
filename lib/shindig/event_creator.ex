@@ -1,6 +1,5 @@
 defmodule Shindig.EventCreator do
   import String, only: [ strip: 1, split: 2 ]
-  import Enum,   only: [ map: 2,   reject: 2 ]
   @moduledoc """
   Interface for creating events based on a name, count, and optional timestamp.
   """
@@ -14,16 +13,16 @@ defmodule Shindig.EventCreator do
       {:ok, Shindig.Event[name: "foo", count: 99, timestamp: { 10, 200, 0 }] }
 
       iex> new_event_from_plaintext("blah")
-      {:error, "No count or timestamp"}
+      {:error, :missing, "No count or timestamp"}
 
       iex> new_event_from_plaintext("blah 99")
-      {:error, "No timestamp"}
+      {:error, :missing, "No timestamp"}
 
       iex> new_event_from_plaintext("blah blah 10000200")
-      {:error, "Bad format"}
+      {:error, :format, "Bad format"}
 
       iex> new_event_from_plaintext("blah 99 blah")
-      {:error, "Bad format"}
+      {:error, :format, "Bad format"}
   """
   def new_event_from_plaintext(string) do
     case string |> strip |> split(%r/\s+/) |> convert_types do
@@ -33,19 +32,6 @@ defmodule Shindig.EventCreator do
                         {div(timestamp,1_000_000),rem(timestamp,1_000_000),0})}
       x -> x
     end
-  end
-
-  @doc """
-  Create mutliple events from a stream of text calling `new_event_from_plaintext`
-  for each line, skipping blank lines
-  """
-  def new_events_from_plaintext(string) do
-    string 
-      |> strip 
-      |> split(%r/\n/) 
-      |> map(&strip/1)
-      |> reject(&(String.length(&1) == 0))
-      |> map(&new_event_from_plaintext/1)
   end
 
   @doc """
@@ -70,12 +56,12 @@ defmodule Shindig.EventCreator do
       case list do
         [event_name,count,timestamp] -> 
           [event_name,binary_to_integer(count),binary_to_integer(timestamp)]
-        [event_name,count] -> { :error, "No timestamp" }
-        [event_name]       -> { :error, "No count or timestamp" }
+        [event_name,count] -> { :error, :missing, "No timestamp" }
+        [event_name]       -> { :error, :missing, "No count or timestamp" }
         _ -> list
       end
     rescue
-      ex -> {:error,"Bad format"}
+      ex -> {:error,:format,"Bad format"}
     end
   end
 
